@@ -17,6 +17,7 @@ pip install -e .
 #+end_example
 
 ** Examples
+
 Generate some 1d gradient noise with different number of octaves
 #+BEGIN_SRC jupyter-python :session py: exports both
 from importlib import reload
@@ -34,6 +35,7 @@ plt.show()
 
 #+RESULTS:
 [[file:./.ob-jupyter/64c0e12b61305c0229409bed6ce5a1fae7d99b7b.png]]
+
 
 Perturb points along a circle with 2d noise
 #+BEGIN_SRC jupyter-python :session py :exports both
