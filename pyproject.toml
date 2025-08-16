@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "rumore"
+version = "0.1.0"
+description = "A simple Python package with NumPy dependency"
+readme = "README.md"
+license = { file = "LICENSE" }
+authors = [
+    { name = "Daniel Berio"}
+]
+requires-python = ">=3.8"
+dependencies = [
+    "numpy"
+]
+
+[project.urls]
+Homepage = "https://github.com/colormotor/rumore"
+Issues = "https://github.com/colormotor/rumore/issues"
+
+[tool.setuptools]
+# Explicitly say: the "rumore" package is the one in the rumore/ folder
+packages = ["rumore"]

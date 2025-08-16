@@ -1,0 +1,63 @@
+#+title: RUMORE
+* Vectorized value & gradient noise with NumPy
+
+Rumore is a lightweight Python library for procedural noise. It provides *value noise* and *gradient noise* in *1D/2D/3D* plus *octave summation* of these (fractal Brownian motion, fBm).
+
+The library does not implement Ken Perlin’s original algorithm directly, but its gradient noise produces visually similar results.
+
+
+** Install with PIP
+#+begin_example
+pip install rumore
+#+end_example
+** Install locally
+Clone the repo, navigate to the directory and from there
+#+begin_example
+pip install -e .
+#+end_example
+
+** Examples
+Generate some 1d gradient noise with different number of octaves
+#+BEGIN_SRC jupyter-python :session py: exports both
+from importlib import reload
+import matplotlib.pyplot as plt
+import numpy as np
+import rumore
+reload(rumore)
+
+x = np.linspace(-10, 10, 200)
+plt.figure(figsize=(6,3))
+for i in range(1, 6):
+    plt.plot(x, rumore.grad_noise(x, octaves=i))
+plt.show()
+#+END_SRC
+
+#+RESULTS:
+[[file:./.ob-jupyter/64c0e12b61305c0229409bed6ce5a1fae7d99b7b.png]]
+
+Perturb points along a circle with 2d noise
+#+BEGIN_SRC jupyter-python :session py :exports both
+t = np.linspace(0, np.pi*2, 200)
+x = np.cos(t)
+y = np.sin(t)
+r = rumore.grad_noise(x, y)*0.5+0.5
+plt.figure(figsize=(4,4))
+plt.plot(x*r, y*r)
+plt.show()
+#+END_SRC
+
+#+RESULTS:
+[[file:./.ob-jupyter/58ba439b8b78e2c1218f6ba58a3da78d2117d090.png]]
+
+Generate a grid of 2d noise value (a grayscale image)
+#+BEGIN_SRC jupyter-python :session py :async no :exports both
+reload(rumore)
+x = np.linspace(0, 5, 300)
+y = np.linspace(0, 3, 100)
+img = rumore.noise_grid(x, y)
+plt.imshow(img)
+plt.show()
+#+END_SRC
+
+#+RESULTS:
+[[file:./.ob-jupyter/96246bc242ac1a3192203167ef08f347dce0d9ad.png]]
