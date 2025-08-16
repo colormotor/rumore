@@ -28,6 +28,7 @@ class Config:
         self.lacunarity = 2.0
         self.falloff = 0.5
         self.set_degree(5)  # default to quintic fade (Perlin-style, C² continuous)
+        self.octave_map = lambda x: x # Modify to apply a function to each octave
 
     def set_degree(self, n):
         """
@@ -450,7 +451,7 @@ def make_fbm(func):
         shift = cfg.shift
         x = np.stack(args, axis=0)
         for i in range(octaves):
-            v += a * func(*x)
+            v += a * cfg.octave_map(func(*x))
             x = x * cfg.lacunarity + shift
             a *= cfg.falloff
         return v
@@ -473,7 +474,7 @@ def value_fbm_grid(x, y, octaves=8, mat=None, iter_mat=None):
         # for batch mul to work we need the dimension to be last col
         xx, yy = (np.stack([xx, yy], axis=-1)@mat.T).T
     for i in range(octaves):
-        v += a * value_noise2(xx, yy)
+        v += a * cfg.octave_map(value_noise2(xx, yy))
         xx = xx * cfg.lacunarity + shift
         yy = yy * cfg.lacunarity + shift
         if iter_mat is not None:
@@ -490,7 +491,7 @@ def grad_fbm_grid(x, y, octaves=8, mat=None, iter_mat=None):
         # for batch mul to work we need the dimension to be last col
         xx, yy = (np.stack([xx, yy], axis=-1)@mat.T).T
     for i in range(octaves):
-        v += a * grad_noise2(xx, yy)
+        v += a * cfg.octave_map(grad_noise2(xx, yy))
         xx = xx * cfg.lacunarity + cfg.shift
         yy = yy * cfg.lacunarity + cfg.shift
         if iter_mat is not None:
@@ -508,7 +509,7 @@ def value_fbm_grid3(x, y, z, octaves=8, mat=None, iter_mat=None):
         # for batch mul to work we need the dimension to be last col
         xx, yy, zz = (np.stack([xx, yy, zz], axis=-1)@mat.T).T
     for i in range(octaves):
-        v += a * value_noise3(xx, yy, zz)
+        v += a * cfg.octave_map(value_noise3(xx, yy, zz))
         xx = xx * cfg.lacunarity + cfg.shift
         yy = yy * cfg.lacunarity + cfg.shift
         if iter_mat is not None:
@@ -527,7 +528,7 @@ def grad_fbm_grid3(x, y, z, octaves=8, mat=None, iter_mat=None):
         # for batch mul to work we need the dimension to be last col
         xx, yy, zz = (np.stack([xx, yy, zz], axis=-1)@mat.T).T
     for i in range(octaves):
-        v += a * grad_noise3(xx, yy, zz)
+        v += a * cfg.octave_map(grad_noise3(xx, yy, zz))
         xx = xx * cfg.lacunarity + cfg.shift
         yy = yy * cfg.lacunarity + cfg.shift
         if iter_mat is not None:
