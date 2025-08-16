@@ -41,7 +41,7 @@ plt.show()
 [[file:figures/1d.png]]
 
 Perturb points along a circle with 2d noise
-#+BEGIN_SRC jupyter-python :session py :exports both
+#+BEGIN_SRC jupyter-python :session py :exports both :file figures/2d.png
 t = np.linspace(0, np.pi*2, 200)
 x = np.cos(t)
 y = np.sin(t)
@@ -52,11 +52,11 @@ plt.show()
 #+END_SRC
 
 #+RESULTS:
-[[file:./.ob-jupyter/58ba439b8b78e2c1218f6ba58a3da78d2117d090.png]]
+[[file:figures/2d.png]]
 
 
 Generate a grid of 2d noise value (a grayscale image)
-#+BEGIN_SRC jupyter-python :session py :async no :exports both
+#+BEGIN_SRC jupyter-python :session py :async no :exports both :file figures/2d_grid.png
 reload(rumore)
 x = np.linspace(0, 5, 300)
 y = np.linspace(0, 3, 100)
@@ -66,4 +66,4 @@ plt.show()
 #+END_SRC
 
 #+RESULTS:
-[[file:./.ob-jupyter/96246bc242ac1a3192203167ef08f347dce0d9ad.png]]
+[[file:figures/2d_grid.png]]
