@@ -25,6 +25,9 @@ class Config:
         a function that is applied to the noise of each octave
     """
     def __init__(self):
+        self.set_default()
+
+    def set_default(self):
         self.seed = 0xF00D
         self.shift = 0 #131.2322
         self.lacunarity = 2.0

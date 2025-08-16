@@ -8,7 +8,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "rumore"
-version = "0.1.5"
+version = "0.1.7"
 description = "A numpy-based noise generator"
 readme = "README.md"
 license = { file = "LICENSE" }

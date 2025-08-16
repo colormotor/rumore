@@ -22,6 +22,8 @@ Import necessary stuff
 import matplotlib.pyplot as plt
 import numpy as np
 import rumore
+
+rumore.set_defaults()
 #+END_SRC
 
 #+RESULTS:
@@ -80,11 +82,9 @@ plt.show()
 
 #+end_export
 
-Set noise properties. Here we set the ~octave_map~ property, defining a function that is applied to the noise of each octave:
+Set noise properties. Here we set the ~octave_map~ property, defining a function that is applied to the noise of each octave.
+Note that in a notebook these states are persistent, which can give unexpected results. You can reset everything by using ~rumore.set_defaults()~.
 #+BEGIN_SRC jupyter-python :session py :async no :exports code :file figures/2d_grid_2.png
-from importlib import reload
-from rumore import rumore
-reload(rumore)
 rumore.cfg.lacunarity = 2.0
 rumore.cfg.falloff = 0.5 # falloff for each octave (persistence)
 rumore.cfg.set_degree(5) # Interpolation degree (3 or 5)

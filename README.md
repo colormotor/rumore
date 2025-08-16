@@ -1,14 +1,14 @@
 
 # Table of Contents
 
-1.  [Vectorized value & gradient noise with NumPy](#org1c78bb5)
-    1.  [Install with PIP](#orgace0d7f)
-    2.  [Install locally](#org6a00525)
-    3.  [Examples](#orgfeda3dc)
+1.  [Vectorized value & gradient noise with NumPy](#org538e10d)
+    1.  [Install with PIP](#orgbf7e820)
+    2.  [Install locally](#orga324b4b)
+    3.  [Examples](#org3b350da)
 
 
 
-<a id="org1c78bb5"></a>
+<a id="org538e10d"></a>
 
 # Vectorized value & gradient noise with NumPy
 
@@ -17,14 +17,14 @@ Rumore is a lightweight Python library for procedural noise. It provides **value
 The library does not implement Ken Perlin’s original algorithm directly, but its gradient noise produces visually similar results.
 
 
-<a id="orgace0d7f"></a>
+<a id="orgbf7e820"></a>
 
 ## Install with PIP
 
     pip install rumore
 
 
-<a id="org6a00525"></a>
+<a id="orga324b4b"></a>
 
 ## Install locally
 
@@ -33,7 +33,7 @@ Clone the repo, navigate to the directory and from there
     pip install -e .
 
 
-<a id="orgfeda3dc"></a>
+<a id="org3b350da"></a>
 
 ## Examples
 
@@ -42,10 +42,11 @@ Import necessary stuff
     import matplotlib.pyplot as plt
     import numpy as np
     import rumore
+    
+    rumore.set_defaults()
 
 Generate some 1d gradient noise with different number of octaves
 
-    reload(rumore)
     x = np.linspace(-10, 10, 200)
     plt.figure(figsize=(5,4))
     for i in range(1, 8):
@@ -68,7 +69,6 @@ Perturb points along a circle with 2d noise
 
 Generate a grid of 2d noise value (a grayscale image)
 
-    reload(rumore)
     x = np.linspace(0, 5, 300)
     y = np.linspace(0, 3, 100)
     img = rumore.noise_grid(x, y)
@@ -76,4 +76,21 @@ Generate a grid of 2d noise value (a grayscale image)
     plt.show()
 
 ![img](https://raw.githubusercontent.com/colormotor/rumore/main/figures/2d_grid.png)
+
+Set noise properties. Here we set the `octave_map` property, defining a function that is applied to the noise of each octave.
+Note that in a notebook these states are persistent, which can give unexpected results. You can reset everything by using `rumore.set_defaults()`.
+
+    rumore.cfg.lacunarity = 2.0
+    rumore.cfg.falloff = 0.5 # falloff for each octave (persistence)
+    rumore.cfg.set_degree(5) # Interpolation degree (3 or 5)
+    rumore.cfg.shift = 0 #120.321 # Shift between octaves
+    rumore.cfg.octave_map = lambda x: np.sin(x*np.pi*4)
+    
+    x = np.linspace(0, 5, 300)
+    y = np.linspace(0, 3, 100)
+    img = rumore.noise_grid(x, y)
+    plt.imshow(img, cmap='gray')
+    plt.show()
+
+![img](https://raw.githubusercontent.com/colormotor/rumore/main/figures/2d_grid_2.png)
 
