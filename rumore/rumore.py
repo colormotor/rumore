@@ -110,7 +110,7 @@ def grad_noise(*args, octaves=6):
         return res[0]
     return res
 
-def noise_grid(*args, gradient=True, octaves=6):
+def noise_grid(*args, gradient=True, octaves=6, mat=None, iter_mat=None):
     """
     Generate 2D grids or 3D slices of noise.
 
@@ -129,7 +129,7 @@ def noise_grid(*args, gradient=True, octaves=6):
     ndarray
         Noise values between -1 and 1 over the requested grid.
     """
-    return _grid_funcs[len(args)-2][int(gradient)](*args, octaves=octaves)
+    return _grid_funcs[len(args)-2][int(gradient)](*args, octaves=octaves, mat=mat, iter_mat=iter_mat)
 
 # Internal state
 state = lambda: None
@@ -463,7 +463,7 @@ grad_fbm1 = make_fbm(grad_noise1)
 grad_fbm2 = make_fbm(grad_noise2)
 grad_fbm3 = make_fbm(grad_noise3)
 
-def value_fbm_grid(x, y, octaves=8, mat=None):
+def value_fbm_grid(x, y, octaves=8, mat=None, iter_mat=None):
     ''' Generate fractal value noise over a 2d grid defined by two 1d numpy arrays x, y'''
     v = 0.0
     a = calc_fractal_bounding(octaves)
@@ -476,10 +476,12 @@ def value_fbm_grid(x, y, octaves=8, mat=None):
         v += a * value_noise2(xx, yy)
         xx = xx * cfg.lacunarity + shift
         yy = yy * cfg.lacunarity + shift
+        if iter_mat is not None:
+            xx, yy = (np.stack([xx, yy], axis=-1)@iter_mat.T).T
         a *= cfg.falloff
     return v
 
-def grad_fbm_grid(x, y, octaves=8, mat=None):
+def grad_fbm_grid(x, y, octaves=8, mat=None, iter_mat=None):
     ''' Generate fractal gradient noise over a 2d grid defined by two 1d numpy arrays x, y'''
     v = 0.0
     a = calc_fractal_bounding(octaves)
@@ -491,10 +493,12 @@ def grad_fbm_grid(x, y, octaves=8, mat=None):
         v += a * grad_noise2(xx, yy)
         xx = xx * cfg.lacunarity + cfg.shift
         yy = yy * cfg.lacunarity + cfg.shift
+        if iter_mat is not None:
+            xx, yy = (np.stack([xx, yy], axis=-1)@iter_mat.T).T
         a *= cfg.falloff
     return v
 
-def value_fbm_grid3(x, y, z, octaves=8, mat=None):
+def value_fbm_grid3(x, y, z, octaves=8, mat=None, iter_mat=None):
     ''' Generate fractal value noise over a 2d grid as a slice of a 3d volume defined by two 1d numpy arrays x, y and a scalar z'''
     v = 0.0
     a = calc_fractal_bounding(octaves)
@@ -507,11 +511,13 @@ def value_fbm_grid3(x, y, z, octaves=8, mat=None):
         v += a * value_noise3(xx, yy, zz)
         xx = xx * cfg.lacunarity + cfg.shift
         yy = yy * cfg.lacunarity + cfg.shift
+        if iter_mat is not None:
+            xx, yy, zz = (np.stack([xx, yy, zz], axis=-1)@iter_mat.T).T
         a *= cfg.falloff
     return v
 
 
-def grad_fbm_grid3(x, y, z, octaves=8, mat=None):
+def grad_fbm_grid3(x, y, z, octaves=8, mat=None, iter_mat=None):
     ''' Generate fractal gradient noise over a 2d grid defined by two 1d numpy arrays x, y'''
     v = 0.0
     a = calc_fractal_bounding(octaves)
@@ -524,6 +530,9 @@ def grad_fbm_grid3(x, y, z, octaves=8, mat=None):
         v += a * grad_noise3(xx, yy, zz)
         xx = xx * cfg.lacunarity + cfg.shift
         yy = yy * cfg.lacunarity + cfg.shift
+        if iter_mat is not None:
+            xx, yy, zz = (np.stack([xx, yy, zz], axis=-1)@iter_mat.T).T
+
         a *= cfg.falloff
     return v
 
