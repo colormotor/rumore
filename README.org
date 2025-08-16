@@ -28,6 +28,18 @@ import rumore
 
 #+RESULTS:
 
+Generate some 1d gradient noise with different number of octaves
+#+BEGIN_SRC jupyter-python :session py: exports both
+x = np.linspace(-10, 10, 200)
+plt.figure(figsize=(5,4))
+for i in range(1, 3):
+    plt.plot(x, rumore.grad_noise(x, octaves=i))
+plt.show()
+#+END_SRC
+
+#+RESULTS:
+[[file:./.ob-jupyter/5b1d48cad2f268925098f6f06a92473ead84ecfa.png]]
+
 Perturb points along a circle with 2d noise
 #+BEGIN_SRC jupyter-python :session py :exports both
 t = np.linspace(0, np.pi*2, 200)
@@ -41,22 +53,6 @@ plt.show()
 
 #+RESULTS:
 [[file:./.ob-jupyter/58ba439b8b78e2c1218f6ba58a3da78d2117d090.png]]
-
-
-Generate some 1d gradient noise with different number of octaves
-#+BEGIN_SRC jupyter-python :session py: exports both
-x = np.linspace(-10, 10, 200)
-plt.figure(figsize=(5,4))
-for i in range(1, 6):
-    plt.plot(x, rumore.grad_noise(x, octaves=i))
-plt.show()
-#+END_SRC
-
-#+RESULTS:
-:RESULTS:
-: Image
-[[file:./.ob-jupyter/555211a32e738c7e5cbd71993b64dc87767e912b.png]]
-:END:
 
 
 Generate a grid of 2d noise value (a grayscale image)
