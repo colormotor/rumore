@@ -17,15 +17,19 @@ pip install -e .
 #+end_example
 
 ** Examples
-
-Generate some 1d gradient noise with different number of octaves
-#+BEGIN_SRC jupyter-python :session py: exports both
+Import necessary stuff
+#+BEGIN_SRC jupyter-python :session py
 from importlib import reload
 import matplotlib.pyplot as plt
 import numpy as np
 import rumore
-reload(rumore)
+#reload(rumore)
+#+END_SRC
 
+#+RESULTS:
+
+Generate some 1d gradient noise with different number of octaves
+#+BEGIN_SRC jupyter-python :session py: exports both
 x = np.linspace(-10, 10, 200)
 plt.figure(figsize=(5,4))
 for i in range(1, 6):
