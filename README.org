@@ -23,10 +23,10 @@ from importlib import reload
 import matplotlib.pyplot as plt
 import numpy as np
 import rumore
-#reload(rumore)
 #+END_SRC
 
 #+RESULTS:
+: <module 'rumore' from '/Users/colormotor/develop/autograff/modules/rumore/rumore/__init__.py'>
 
 Generate some 1d gradient noise with different number of octaves
 #+BEGIN_SRC jupyter-python :session py :exports both :file figures/1d.png
@@ -38,7 +38,11 @@ plt.show()
 #+END_SRC
 
 #+RESULTS:
+:RESULTS:
+: Bound found
+: Bound found
 [[file:figures/1d.png]]
+:END:
 
 Perturb points along a circle with 2d noise
 #+BEGIN_SRC jupyter-python :session py :exports both :file figures/2d.png

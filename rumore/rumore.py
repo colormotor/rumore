@@ -224,22 +224,17 @@ def hash11(hx):
     return to01(h)*2 - 1
 
 # 2D combine
-def hash21(hx, hy):
+def hash21i(hx, hy):
     hx, hy = [uint64(v) for v in [hx, hy]]
     h  = np.uint64(cfg.seed)
     h  = hashf(h ^ (_u64(hx) + C1))
     h  = hashf(h ^ (_u64(hy) + C2))
-    return to01(h)*2 - 1
+    return h
+
+def hash21(hx, hy):
+    return to01(hash21i(hx, hy))*2 - 1
 
 # 3D combine
-def hash31(hx, hy, hz):
-    hx, hy, hz = [uint64(v) for v in [hx, hy, hz]]
-    h  = np.uint64(cfg.seed)
-    h  = hashf(h ^ (_u64(hx) + C1))
-    h  = hashf(h ^ (_u64(hy) + C2))
-    h  = hashf(h ^ (_u64(hz) + C3))
-    return to01(h)*2 - 1
-
 def hash31i(hx, hy, hz):
     hx, hy, hz = [uint64(v) for v in [hx, hy, hz]]
     h  = np.uint64(cfg.seed)
@@ -247,6 +242,9 @@ def hash31i(hx, hy, hz):
     h  = hashf(h ^ (_u64(hy) + C2))
     h  = hashf(h ^ (_u64(hz) + C3))
     return h
+
+def hash31(hx, hy, hz):
+    return to01(hash31i(hx, hy, hz))*2 - 1
 
 def hash33(hx, hy, hz):
     hx, hy, hz = [uint64(v + cfg.seed) for v in [hx, hy, hz]]
@@ -312,12 +310,22 @@ def grad_noise1(x):
     # From https://www.shadertoy.com/view/3sd3Rs
     return 2*mix( g0*(f-0.0), g1*(f-1.0), u)
 
-def grad21(x, y):
-    theta = hash21(x, y)*np.pi
-    return np.cos(theta), np.sin(theta)
+def grad2(x, y):
+    N = 64
+    if state.sphere is None:
+        t = np.linspace(0, np.pi*2, N, endpoint=False)
+        state.circle = np.vstack([np.cos(t), np.sin(t)]).T
+        np.random.default_rng(cfg.seed).shuffle(state.circle)
+        state.circle = state.circle.T
+
+    i = hash21i(x, y)&(N-1)
+    return state.circle[:, i]
+
+    # theta = hash21(x, y)*np.pi
+    # return np.cos(theta), np.sin(theta)
 
 def dotgrad21(x, y, ox, oy, f):
-    gx, gy = grad21(x + ox, y + oy)
+    gx, gy = grad2(x + ox, y + oy)
     return gx*(f[0]-ox) + gy*(f[1]-oy)
 
 def grad_noise2(x, y):
@@ -330,7 +338,7 @@ def grad_noise2(x, y):
     c = dotgrad21(i[0], i[1], 0.0, 1.0, f)
     d = dotgrad21(i[0], i[1], 1.0, 1.0, f)
 
-    scale = 1.4142135623730950488 #1.0/sqrt(0.5)
+    scale = 1.414213562373095 #1/sqrt(0.5**2 + 0.5**2)
     return mix(mix(a, b, u[0]),
                mix(c, d, u[0]), u[1])*scale
 
@@ -350,15 +358,11 @@ def fibonacci_sphere(samples=100):
     return np.array(points)
 
 def grad3(x, y, z):
-    N = 256
+    N = 64
     if state.sphere is None:
         state.sphere = fibonacci_sphere(N)
-        np.random.shuffle(state.sphere)
+        np.random.default_rng(cfg.seed).shuffle(state.sphere)
         state.sphere = state.sphere.T
-    # res = hash33(x, y, z)
-    # print(res.shape)
-    # return res
-
     i = hash31i(x, y, z)&(N-1)
     return state.sphere[:, i]
 
@@ -399,7 +403,7 @@ def grad_noise3(x, y, z):
     g = dotgrad31(i[0], i[1], i[2], 0.0, 1.0, 1.0, ff)
     h = dotgrad31(i[0], i[1], i[2], 1.0, 1.0, 1.0, ff)
 
-    scale = 1.15470053837925152901829*2 # 1.0/sqrt(0.75)
+    scale = 1.1547005383792517 ##1/sqrt(0.5**2 + 0.5**2 + 0.5**3)
     return mix(mix(mix(a, b, u[0]),
                    mix(c, d, u[0]), u[1]),
                mix(mix(e, f, u[0]),
@@ -410,15 +414,24 @@ def calc_fractal_bounding(octaves):
     key = (octaves, cfg.falloff)
     if key in state.fractal_bounding:
         return state.fractal_bounding[key]
+    v = 0.0
+    a = 1.0
+    amp = 0.0
+    for i in range(octaves):
+        amp += a
+        a *= cfg.falloff
+    bound = 1.0 / amp
+    state.fractal_bounding[key] = bound
+    return bound
 
-    r = cfg.falloff
-    if r == 1.0:
-        fb = 1.0 / max(1, octaves)        # handle the r=1 edge case
-    else:
-        fb = (1.0 - r) / (1.0 - r**octaves)
+    # r = cfg.falloff
+    # if r == 1.0:
+    #     fb = 1.0 / max(1, octaves)        # handle the r=1 edge case
+    # else:
+    #     fb = (1.0 - r) / (1.0 - r**octaves)
 
-    state.fractal_bounding[key] = fb
-    return fb
+    # state.fractal_bounding[key] = fb
+    # return fb
 
     # falloff = cfg.falloff
     # amp = falloff
