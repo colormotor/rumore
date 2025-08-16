@@ -19,33 +19,33 @@ pip install -e .
 ** Examples
 Import necessary stuff
 #+BEGIN_SRC jupyter-python :session py
-from importlib import reload
 import matplotlib.pyplot as plt
 import numpy as np
 import rumore
 #+END_SRC
 
 #+RESULTS:
-: <module 'rumore' from '/Users/colormotor/develop/autograff/modules/rumore/rumore/__init__.py'>
 
 Generate some 1d gradient noise with different number of octaves
-#+BEGIN_SRC jupyter-python :session py :exports both :file figures/1d.png
+#+BEGIN_SRC jupyter-python :session py :exports code :file figures/1d.png
+reload(rumore)
 x = np.linspace(-10, 10, 200)
 plt.figure(figsize=(5,4))
-for i in range(1, 3):
+for i in range(1, 8):
     plt.plot(x, rumore.grad_noise(x, octaves=i))
 plt.show()
 #+END_SRC
 
 #+RESULTS:
-:RESULTS:
-: Bound found
-: Bound found
 [[file:figures/1d.png]]
-:END:
+
+#+begin_export md
+![img](https://raw.githubusercontent.com/colormotor/rumore/main/figures/1d.png)
+
+#+end_export
 
 Perturb points along a circle with 2d noise
-#+BEGIN_SRC jupyter-python :session py :exports both :file figures/2d.png
+#+BEGIN_SRC jupyter-python :session py :exports code :file figures/2d.png
 t = np.linspace(0, np.pi*2, 200)
 x = np.cos(t)
 y = np.sin(t)
@@ -58,9 +58,14 @@ plt.show()
 #+RESULTS:
 [[file:figures/2d.png]]
 
+#+begin_export md
+![img](https://raw.githubusercontent.com/colormotor/rumore/main/figures/2d.png)
+
+#+end_export
+
 
 Generate a grid of 2d noise value (a grayscale image)
-#+BEGIN_SRC jupyter-python :session py :async no :exports both :file figures/2d_grid.png
+#+BEGIN_SRC jupyter-python :session py :async no :exports code :file figures/2d_grid.png
 reload(rumore)
 x = np.linspace(0, 5, 300)
 y = np.linspace(0, 3, 100)
@@ -71,3 +76,8 @@ plt.show()
 
 #+RESULTS:
 [[file:figures/2d_grid.png]]
+
+#+begin_export md
+![img](https://raw.githubusercontent.com/colormotor/rumore/main/figures/2d_grid.png)
+
+#+end_export

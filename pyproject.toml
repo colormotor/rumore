@@ -1,11 +1,15 @@
+# PyPi steps
+# python -m build
+# twine upload dist/*
+
 [build-system]
 requires = ["setuptools>=61.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "rumore"
-version = "0.1.0"
-description = "A simple Python package with NumPy dependency"
+version = "0.1.5"
+description = "A numpy-based noise generator"
 readme = "README.md"
 license = { file = "LICENSE" }
 authors = [
