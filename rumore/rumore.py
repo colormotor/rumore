@@ -259,10 +259,6 @@ def hash22(hx, hy):
 def mix(a, b, t):
     return a + (b - a)*t
 
-def fade(t):
-    return t*t*(3.0-2.0*t)
-    # return t * t * t * (t * (t * 6 - 15) + 10);
-
 def stack(v):
     return np.stack(v, axis=0)
 
@@ -315,7 +311,6 @@ def grad_noise1(x):
     g1 = hash11(i + 1)
     # From https://www.shadertoy.com/view/3sd3Rs
     return 2*mix( g0*(f-0.0), g1*(f-1.0), u)
-    #return mix(hash11(i), hash11(i + 1), u)
 
 def grad21(x, y):
     theta = hash21(x, y)*np.pi
@@ -412,17 +407,28 @@ def grad_noise3(x, y, z):
 
 def calc_fractal_bounding(octaves):
     '''Helper to scale the sum of octaves'''
-    if octaves in state.fractal_bounding:
-        return state.fractal_bounding[(octaves, cfg.falloff)]
-    falloff = cfg.falloff
-    amp = falloff;
-    amp_fractal = 1.0
-    for i in range(octaves):
-        amp_fractal += amp
-        amp *= falloff
-    fractal_bounding = 1 / amp_fractal
-    state.fractal_bounding[(octaves, cfg.falloff)] = fractal_bounding
-    return fractal_bounding
+    key = (octaves, cfg.falloff)
+    if key in state.fractal_bounding:
+        return state.fractal_bounding[key]
+
+    r = cfg.falloff
+    if r == 1.0:
+        fb = 1.0 / max(1, octaves)        # handle the r=1 edge case
+    else:
+        fb = (1.0 - r) / (1.0 - r**octaves)
+
+    state.fractal_bounding[key] = fb
+    return fb
+
+    # falloff = cfg.falloff
+    # amp = falloff
+    # amp_fractal = 1.0
+    # for i in range(octaves):
+    #     amp_fractal += amp
+    #     amp *= falloff
+    # fractal_bounding = 1 / amp_fractal
+    # state.fractal_bounding[(octaves, cfg.falloff)] = fractal_bounding
+    # return fractal_bounding
 
 def make_fbm(func):
     def fbm(*args, octaves=8):
@@ -432,7 +438,7 @@ def make_fbm(func):
         x = np.stack(args, axis=0)
         for i in range(octaves):
             v += a * func(*x)
-            x = x * 2.0 + shift
+            x = x * cfg.lacunarity + shift
             a *= cfg.falloff
         return v
     return fbm
@@ -456,7 +462,7 @@ def value_fbm_grid(x, y, octaves=8, mat=None):
     for i in range(octaves):
         v += a * value_noise2(xx, yy)
         xx = xx * cfg.lacunarity + shift
-        yy = yy * 2.0 + shift
+        yy = yy * cfg.lacunarity + shift
         a *= cfg.falloff
     return v
 
