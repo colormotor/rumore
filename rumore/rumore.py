@@ -21,10 +21,12 @@ class Config:
         Interpolation function (cubic or quintic), set by set_degree().
     degree : int
         Current interpolation degree (3 or 5).
+    octave_map : function of x
+        a function that is applied to the noise of each octave
     """
     def __init__(self):
         self.seed = 0xF00D
-        self.shift = 131.2322
+        self.shift = 0 #131.2322
         self.lacunarity = 2.0
         self.falloff = 0.5
         self.set_degree(5)  # default to quintic fade (Perlin-style, C² continuous)

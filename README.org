@@ -28,7 +28,6 @@ import rumore
 
 Generate some 1d gradient noise with different number of octaves
 #+BEGIN_SRC jupyter-python :session py :exports code :file figures/1d.png
-reload(rumore)
 x = np.linspace(-10, 10, 200)
 plt.figure(figsize=(5,4))
 for i in range(1, 8):
@@ -66,7 +65,6 @@ plt.show()
 
 Generate a grid of 2d noise value (a grayscale image)
 #+BEGIN_SRC jupyter-python :session py :async no :exports code :file figures/2d_grid.png
-reload(rumore)
 x = np.linspace(0, 5, 300)
 y = np.linspace(0, 3, 100)
 img = rumore.noise_grid(x, y)
@@ -79,5 +77,31 @@ plt.show()
 
 #+begin_export md
 ![img](https://raw.githubusercontent.com/colormotor/rumore/main/figures/2d_grid.png)
+
+#+end_export
+
+Set noise properties. Here we set the ~octave_map~ property, defining a function that is applied to the noise of each octave:
+#+BEGIN_SRC jupyter-python :session py :async no :exports code :file figures/2d_grid_2.png
+from importlib import reload
+from rumore import rumore
+reload(rumore)
+rumore.cfg.lacunarity = 2.0
+rumore.cfg.falloff = 0.5 # falloff for each octave (persistence)
+rumore.cfg.set_degree(5) # Interpolation degree (3 or 5)
+rumore.cfg.shift = 0 #120.321 # Shift between octaves
+rumore.cfg.octave_map = lambda x: np.sin(x*np.pi*4)
+
+x = np.linspace(0, 5, 300)
+y = np.linspace(0, 3, 100)
+img = rumore.noise_grid(x, y)
+plt.imshow(img, cmap='gray')
+plt.show()
+#+END_SRC
+
+#+RESULTS:
+[[file:figures/2d_grid_2.png]]
+
+#+begin_export md
+![img](https://raw.githubusercontent.com/colormotor/rumore/main/figures/2d_grid_2.png)
 
 #+end_export
